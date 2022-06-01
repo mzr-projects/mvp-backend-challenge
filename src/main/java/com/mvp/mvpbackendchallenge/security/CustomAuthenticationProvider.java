@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,6 +29,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		String password = authentication.getCredentials().toString();
 
 		VendingMachineUser user = userRepository.findVendingMachineUserByUserName(userName);
+
+		if (user == null) {
+			throw new UsernameNotFoundException("User not found");
+		}
 
 		Set<VendingMachineUserRole> roles = user.getVendingMachineUserRoleSet();
 		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
